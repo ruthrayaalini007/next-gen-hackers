@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function handleUserMessage(text) {
+    async function handleUserMessage(text) {
         // Append user message
         appendMessage(text, 'user-message');
         
@@ -144,13 +144,34 @@ document.addEventListener('DOMContentLoaded', () => {
         // Scroll to bottom
         scrollToBottom();
 
-        // Simulate AI Response delay
-        setTimeout(() => {
-            const response = generateAIResponse(text);
+        try {
+            // Call our new Node.js backend
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    message: text,
+                    userName: userName,
+                    currentLang: currentLang
+                })
+            });
+
+            if (!response.ok) throw new Error("Network Error");
+            
+            const data = await response.json();
+            
             typingIndicator.style.display = 'none';
-            appendMessage(response, 'ai-message');
+            appendMessage(data.reply, 'ai-message');
             scrollToBottom();
-        }, 1200);
+
+        } catch (error) {
+            typingIndicator.style.display = 'none';
+            appendMessage("Sorry, I am having trouble connecting to my servers right now.", 'ai-message');
+            scrollToBottom();
+            console.error(error);
+        }
     }
 
     function appendMessage(text, className) {
@@ -171,25 +192,36 @@ document.addEventListener('DOMContentLoaded', () => {
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-    function generateAIResponse(input) {
-        const lowerInput = input.toLowerCase();
-        
-        // Handle Multilingual Responses (Simplified mock)
-        if (currentLang === 'es') return "Lo siento, soy un prototipo y mis respuestas completas en español aún se están desarrollando. (Sorry, I'm a prototype and my full Spanish responses are still developing.)";
-        if (currentLang === 'fr') return "Désolé, je suis un prototype et mes réponses complètes en français sont encore en cours de développement. (Sorry, I'm a prototype and my full French responses are still developing.)";
-        if (currentLang === 'hi') return "क्षमा करें, मैं एक प्रोटोटाइप हूं और मेरे पूर्ण हिंदी उत्तर अभी भी विकसित हो रहे हैं। (Sorry, I'm a prototype and my full Hindi responses are still developing.)";
-
-        // English Responses with Crowd & Real-time Info
-        if (lowerInput.includes('train to downtown')) {
-            return "The next train to Downtown Central (Line 4) departs in 2 minutes. ⚠️ <b>Alert:</b> This train currently has a <b>High Crowd Level</b>. If you prefer a more comfortable ride, the following train in 12 minutes is predicted to have Low crowds.";
-        } else if (lowerInput.includes('delay') || lowerInput.includes('line 4') || lowerInput.includes('crowd')) {
-            return "Line 4 is running on time but is currently <b>highly crowded</b>. However, Line 2 to Airport Terminal is experiencing a 14-minute delay due to a signal failure, with medium crowd levels. Would you like an alternative route?";
-        } else if (lowerInput.includes('fastest route') || lowerInput.includes('home')) {
-            return "The fastest route home from your location is taking the BX Bus from the Westside Hub. It arrives in 7 minutes, and the total trip will take about 22 minutes. Good news: Crowd levels on the BX line are currently <b>Low</b>.";
-        } else if (lowerInput.includes('ticket')) {
-            return "You have a monthly transit pass activated that is valid until the end of the month. No additional ticket is required for this trip.";
-        } else {
-            return "I'm analyzing the best transit options for that considering real-time crowd data and delays. Could you provide a more specific destination or station?";
+    // Function to load real-time widget data from backend
+    async function loadDepartures() {
+        try {
+            const response = await fetch('/api/departures');
+            if (!response.ok) return;
+            const data = await response.json();
+            
+            const departureList = document.querySelector('.departure-list');
+            departureList.innerHTML = '';
+            
+            data.forEach(dep => {
+                const itemHtml = `
+                    <div class="departure-item">
+                        <div class="dep-line ${dep.colorClass}">${dep.line}</div>
+                        <div class="dep-details">
+                            <span class="dep-dest">${dep.dest}</span>
+                            <div class="dep-meta">
+                                <span class="dep-status ${dep.statusClass}">${dep.status}</span>
+                                <span class="crowd-level ${dep.crowdClass}"><i class="ri-group-fill"></i> ${dep.crowd}</span>
+                            </div>
+                        </div>
+                        <div class="dep-time">${dep.time}</div>
+                    </div>`;
+                departureList.innerHTML += itemHtml;
+            });
+        } catch (e) {
+            console.error("Could not load live departures:", e);
         }
     }
+
+    // Call it initially
+    loadDepartures();
 });
