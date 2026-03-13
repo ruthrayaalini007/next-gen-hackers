@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TransitAI - Public Transport Assistant</title>
+    <meta name="description" content="Your intelligent public transport assistant. Real-time routing, delays, and smart suggestions.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass-panel">
+            <div class="logo">
+                <i class="ri-route-line"></i>
+                <span>Transit<b>AI</b></span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active"><i class="ri-chat-3-line"></i> Assistant</a>
+                <a href="#" class="nav-item"><i class="ri-map-pin-line"></i> Live Map</a>
+                <a href="#" class="nav-item"><i class="ri-ticket-2-line"></i> Tickets</a>
+                <a href="#" class="nav-item"><i class="ri-time-line"></i> Schedules</a>
+            </nav>
+            <div class="sidebar-bottom">
+                <div class="lang-selector">
+                    <i class="ri-global-line"></i>
+                    <select id="language-select">
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="hi">हिन्दी (Hindi)</option>
+                    </select>
+                </div>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="User Avatar" width="40" height="40">
+                    <div class="user-info">
+                        <span class="user-name">Guest User</span>
+                        <span class="user-status">Online</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <div>
+                    <h1>Good Evening, Traveler</h1>
+                    <p class="subtitle">Where are we heading today?</p>
+                </div>
+                <div class="status-badge pulse">
+                    <i class="ri-shield-check-line"></i> All Systems Normal
+                </div>
+            </header>
+
+            <div class="content-grid">
+                <!-- Chat Assistant Area -->
+                <section class="chat-section glass-panel">
+                    <div class="chat-header">
+                        <div class="ai-avatar">
+                            <i class="ri-robot-2-fill"></i>
+                        </div>
+                        <div class="ai-title">
+                            <h3>Journey Assistant</h3>
+                            <span class="typing-indicator" id="typing-indicator" style="display: none;">Typing...</span>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message ai-message">
+                            <p>Hello! I'm your TransitAI assistant. I can help you find optimal routes, check live departures, or notify you about disruptions. How can I assist you right now?</p>
+                            <span class="time">Just now</span>
+                        </div>
+                    </div>
+
+                    <div class="chat-input-area">
+                        <div class="quick-prompts">
+                            <button class="prompt-btn">Train to Downtown</button>
+                            <button class="prompt-btn">Any delays on Line 4?</button>
+                            <button class="prompt-btn">Fastest route home</button>
+                        </div>
+                        <form id="chat-form" class="input-form">
+                            <button type="button" class="mic-btn" id="mic-btn" title="Click to speak">
+                                <i class="ri-mic-fill"></i>
+                            </button>
+                            <input type="text" id="user-input" placeholder="Ask about routes, delays, or stations..." autocomplete="off">
+                            <button type="submit" class="send-btn">
+                                <i class="ri-send-plane-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Side Widget Area -->
+                <section class="widgets-section">
+                    <div class="widget glass-panel">
+                        <div class="widget-header">
+                            <h3>Live Departures</h3>
+                            <i class="ri-more-2-fill"></i>
+                        </div>
+                        <div class="departure-list">
+                            <div class="departure-item">
+                                <div class="dep-line line-red">L4</div>
+                                <div class="dep-details">
+                                    <span class="dep-dest">Downtown Central</span>
+                                    <div class="dep-meta">
+                                        <span class="dep-status on-time">On Time</span>
+                                        <span class="crowd-level crowd-high" title="High Crowd Level"><i class="ri-group-fill"></i> High</span>
+                                    </div>
+                                </div>
+                                <div class="dep-time">2 min</div>
+                            </div>
+                            <div class="departure-item">
+                                <div class="dep-line line-blue">L2</div>
+                                <div class="dep-details">
+                                    <span class="dep-dest">Airport Terminal</span>
+                                    <div class="dep-meta">
+                                        <span class="dep-status delayed">Delayed</span>
+                                        <span class="crowd-level crowd-med" title="Medium Crowd Level"><i class="ri-group-fill"></i> Med</span>
+                                    </div>
+                                </div>
+                                <div class="dep-time">14 min</div>
+                            </div>
+                            <div class="departure-item">
+                                <div class="dep-line line-green">BX</div>
+                                <div class="dep-details">
+                                    <span class="dep-dest">Westside Hub</span>
+                                    <div class="dep-meta">
+                                        <span class="dep-status on-time">On Time</span>
+                                        <span class="crowd-level crowd-low" title="Low Crowd Level"><i class="ri-group-fill"></i> Low</span>
+                                    </div>
+                                </div>
+                                <div class="dep-time">7 min</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget glass-panel map-widget">
+                        <div class="widget-header">
+                            <h3>Nearby Stations</h3>
+                        </div>
+                        <div class="map-placeholder">
+                            <i class="ri-map-pin-user-fill pulse-marker"></i>
+                            <div class="map-overlay">Interactive Map Ready</div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
