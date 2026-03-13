@@ -1,4 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // New Elements
+    const loginModal = document.getElementById('login-modal');
+    const loginForm = document.getElementById('login-form');
+    const loginNameInput = document.getElementById('login-name');
+    const mainApp = document.getElementById('main-app');
+    const userNameDisplay = document.getElementById('user-name-display');
+    const greetingTitle = document.getElementById('greeting-title');
+    const toastContainer = document.getElementById('toast-container');
+    const navItems = document.querySelectorAll('.nav-item');
+    const initialAiMsg = document.getElementById('initial-ai-msg').querySelector('p');
+
+    let userName = "Traveler";
+    
     const chatForm = document.getElementById('chat-form');
     const userInput = document.getElementById('user-input');
     const chatMessages = document.getElementById('chat-messages');
@@ -9,6 +22,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentLang = 'en';
     let isRecording = false;
+
+    // Login Handling
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const enteredName = loginNameInput.value.trim();
+        if (enteredName) {
+            userName = enteredName;
+            
+            // Update UI elements
+            userNameDisplay.innerText = userName;
+            greetingTitle.innerText = `Good Evening, ${userName}`;
+            initialAiMsg.innerText = `Hello ${userName}! I'm your TransitAI assistant. I can help you find optimal routes, check live departures, or notify you about disruptions. How can I assist you right now?`;
+            
+            // Hide Modal and show App
+            loginModal.classList.add('hidden');
+            mainApp.style.filter = 'blur(0)';
+            mainApp.style.pointerEvents = 'auto';
+            
+            // Simulate AI initial personalization
+            showToast(`Welcome aboard, ${userName}!`, 'ri-user-smile-line');
+        }
+    });
+
+    // Sidebar Interaction Handling
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            // Remove active from all
+            navItems.forEach(nav => nav.classList.remove('active'));
+            // Add active to clicked
+            item.classList.add('active');
+            
+            // Show toast message
+            const featureName = item.innerText.trim();
+            const iconClass = item.querySelector('i').className;
+            if (featureName !== 'Assistant') {
+                showToast(`Loading ${featureName} module...`, iconClass);
+            } else {
+                showToast(`Switched to Assistant`, iconClass);
+            }
+        });
+    });
+
+    // Toast Notification System
+    function showToast(message, iconClass = 'ri-information-line') {
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `<i class="${iconClass}"></i> <span>${message}</span>`;
+        
+        toastContainer.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('fade-out');
+            setTimeout(() => {
+                if (toastContainer.contains(toast)) {
+                    toastContainer.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+    }
 
     // Handle Language Selection
     langSelect.addEventListener('change', (e) => {

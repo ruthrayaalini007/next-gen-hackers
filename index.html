@@ -10,7 +10,26 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal-overlay">
+        <div class="login-card glass-panel">
+            <div class="logo login-logo">
+                <i class="ri-route-line pulse"></i>
+                <span>Transit<b>AI</b></span>
+            </div>
+            <h2>Welcome Aboard</h2>
+            <p>Please enter your name to personalize your journey.</p>
+            <form id="login-form">
+                <input type="text" id="login-name" class="login-input" placeholder="Your Name..." required autocomplete="off" autofocus>
+                <button type="submit" class="login-btn">Enter Dashboard <i class="ri-arrow-right-line"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <div class="app-container" id="main-app" style="filter: blur(8px); pointer-events: none; transition: filter 0.8s ease;">
         <!-- Sidebar -->
         <aside class="sidebar glass-panel">
             <div class="logo">
@@ -36,7 +55,7 @@
                 <div class="user-profile">
                     <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="User Avatar" width="40" height="40">
                     <div class="user-info">
-                        <span class="user-name">Guest User</span>
+                        <span id="user-name-display" class="user-name">Guest User</span>
                         <span class="user-status">Online</span>
                     </div>
                 </div>
@@ -47,7 +66,7 @@
         <main class="main-content">
             <header class="top-header">
                 <div>
-                    <h1>Good Evening, Traveler</h1>
+                    <h1 id="greeting-title">Good Evening, Traveler</h1>
                     <p class="subtitle">Where are we heading today?</p>
                 </div>
                 <div class="status-badge pulse">
@@ -69,7 +88,7 @@
                     </div>
                     
                     <div class="chat-messages" id="chat-messages">
-                        <div class="message ai-message">
+                        <div class="message ai-message" id="initial-ai-msg">
                             <p>Hello! I'm your TransitAI assistant. I can help you find optimal routes, check live departures, or notify you about disruptions. How can I assist you right now?</p>
                             <span class="time">Just now</span>
                         </div>
